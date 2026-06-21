@@ -1,4 +1,4 @@
-# Library Booking API
+# Concurrent Library API
 
 A REST API for a small library system: create books, look up their availability, borrow a copy, and return it. Built with FastAPI and PostgreSQL (via SQLAlchemy's async ORM), with particular attention to correctness under concurrency — the API guarantees a book can never be overbooked, even under simultaneous borrow requests.
 
@@ -44,7 +44,7 @@ The fix was moving engine creation inside the fixture itself, so a fresh engine 
 
 ```bash
 git clone <your-repo-url>
-cd fastapi-learning
+cd concurrent-library-api
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
