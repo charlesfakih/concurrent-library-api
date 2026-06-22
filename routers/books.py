@@ -1,11 +1,12 @@
 from uuid import UUID
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import func, select
 
 
 from database import SessionDep
 from models import BookTable, LoanTable
+from routers.auth import get_current_user
 from schemas import Book, BookResponse, Loan
 
 router = APIRouter(prefix="/books", tags=["books"])
@@ -42,7 +43,7 @@ async def get_book(book_id: UUID, session: SessionDep):
     )
 
 @router.post("/{book_id}/borrow", response_model=Loan, status_code=201)
-async def borrow_copy(book_id: UUID, session: SessionDep):
+async def borrow_copy(book_id: UUID, session: SessionDep, user_id: str = Depends(get_current_user)):
     stmt = select(BookTable).where(BookTable.id == book_id).with_for_update()
     book = await session.scalar(stmt)
     if book is None:
@@ -53,12 +54,13 @@ async def borrow_copy(book_id: UUID, session: SessionDep):
     available_copies = book.total_copies - await session.scalar(stmt)
     if available_copies <= 0:
         raise HTTPException(status_code=409, detail="No copies available")
-    loan = LoanTable(book_id=book_id, returned=False)
+    loan = LoanTable(book_id=book_id, returned=False, user_id=UUID(user_id))
     session.add(loan)
     await session.commit()
     await session.refresh(loan)
     return Loan(
         id=loan.id,
         book_id=book_id,
+        user_id=UUID(user_id),
         returned=False
     )

@@ -17,4 +17,11 @@ class LoanTable(Base):
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
     book_id: Mapped[UUID] = mapped_column(ForeignKey("books.id", ondelete="RESTRICT"))
     returned: Mapped[bool] = mapped_column(default=False)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
+
+class UserTable(Base):
+    __tablename__ = "users"
+    id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
+    email: Mapped[str] = mapped_column(unique=True)
+    hashed_password: Mapped[str] = mapped_column()
     

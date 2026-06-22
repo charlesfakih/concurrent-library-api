@@ -17,3 +17,17 @@ class Loan(BaseModel):
     id: UUID = Field(default_factory=uuid4)
     book_id: UUID
     returned: bool = False
+    user_id: UUID
+
+class UserBase(BaseModel):
+    email: str
+
+class UserRequest(UserBase):
+    password: str
+
+class UserResponse(UserBase):
+    id: UUID = Field(default_factory=uuid4)
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = Field(default="bearer")
