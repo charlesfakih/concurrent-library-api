@@ -13,6 +13,11 @@ from database import get_db
 
 TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "postgresql+asyncpg://charles:devpassword@localhost/library_test")
 
+@pytest.fixture
+async def client():
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
 
 @pytest_asyncio.fixture
 async def setup_database():
@@ -29,5 +34,19 @@ async def setup_database():
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
     await test_engine.dispose()
+
+@pytest_asyncio.fixture
+async def auth_token(setup_database, client):
+    response_create_user = await client.post(
+        "/auth/users",
+        json={"email": "charles", "password": "charles"}
+    )
+
+    response_login = await client.post(
+        "/auth/login",
+        data={"username": "charles", "password": "charles"}
+    )
+
+    return response_login.json()["access_token"]
 
 

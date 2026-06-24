@@ -23,5 +23,6 @@ async def return_copy(loan_id: UUID, session: SessionDep):
     return Loan(
         id=loan.id,
         book_id=loan.book_id,
-        returned=loan.returned
+        returned=loan.returned,
+        user_id=loan.user_id
     )
