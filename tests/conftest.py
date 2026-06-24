@@ -1,3 +1,4 @@
+import os
 from typing import Annotated
 
 from fastapi import Depends
@@ -10,7 +11,7 @@ from main import app
 from models import Base
 from database import get_db
 
-TEST_DATABASE_URL = "postgresql+asyncpg://charles:devpassword@localhost/library_test"
+TEST_DATABASE_URL = os.environ.get("TEST_DATABASE_URL", "postgresql+asyncpg://charles:devpassword@localhost/library_test")
 
 
 @pytest_asyncio.fixture
