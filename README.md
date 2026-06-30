@@ -108,3 +108,10 @@ Tests run against a separate `library_test` database, fully isolated from dev da
 - Structured logging that includes identifiers like `book_id` and `loan_id`, so a specific request's full story can be traced through the logs.
 - Resilience around the database going down mid-request: should the app retry? Should there be a connection timeout, so a dead database fails fast instead of hanging requests indefinitely?
 - Untested gaps: the 404 paths for a nonexistent book or nonexistent loan currently have no test coverage.
+
+
+## Deployment
+
+This project was deployed to AWS EC2 with Docker, Nginx as a reverse proxy, and HTTPS via Let's Encrypt. The CI pipeline includes a deploy job that SSHes into the instance, pulls the latest code, and restarts the containers via `docker compose`.
+
+The EC2 instance has since been terminated to avoid ongoing cost, since this is a portfolio project rather than a long-running service — so the deploy job will currently fail since the target secrets aren't configured. The pipeline itself was validated against a live instance before teardown.
